@@ -32,6 +32,7 @@ h1{font-family:var(--disp);font-weight:900;font-size:28px;margin:6px 0 8px;lette
 .try{display:flex;justify-content:center;gap:8px;margin:12px 0 0;flex-wrap:wrap}
 .pill{font:inherit;font-family:var(--disp);font-weight:700;font-size:13.5px;padding:7px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
 .pill[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
+.pill:disabled{opacity:.45;cursor:not-allowed}
 .pill:focus-visible,.opt:focus-visible,.sw button:focus-visible,.big:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 section{margin:26px 0 0}
 .step{display:flex;align-items:baseline;gap:10px;margin:0 0 4px}
@@ -46,7 +47,12 @@ input[type=text]:focus{outline:3px solid var(--teal-soft);border-color:var(--tea
 .sw button[aria-pressed="true"]{color:var(--ink);font-weight:700}
 .sw button[aria-pressed="true"] i{border-color:var(--ink)}
 .more{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:14px;color:var(--ink-soft)}
-.more input{width:44px;height:36px;border:1.5px solid var(--line);border-radius:10px;background:none;padding:2px}
+.more{flex-wrap:wrap;gap:10px 18px}
+.more label{display:inline-flex;align-items:center;gap:8px}
+.more input[type=color]{width:44px;height:36px;border:1.5px solid var(--line);border-radius:10px;background:none;padding:2px}
+.more input[type=text]{width:7.5em;font-size:15px;padding:6px 10px;border-radius:10px;font-family:ui-monospace,Menlo,monospace}
+.more input[type=text][aria-invalid="true"]{border-color:var(--coral);outline-color:var(--coral-soft)}
+a{color:var(--teal-ink)}
 .opts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .opts.four{grid-template-columns:repeat(2,1fr)}
 .opt{appearance:none;font:inherit;border:1.5px solid var(--line);background:#fff;border-radius:16px;padding:8px 8px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--ink)}
@@ -95,14 +101,18 @@ footer b{font-family:var(--disp);color:var(--ink)}
 <section>
   <div class="step"><span class="n">1</span><h2>なまえ</h2></div>
   <p class="hint">呼びやすい2〜3文字がおすすめ。まだ決まらなければ空でも大丈夫です。</p>
-  <input type="text" id="name" maxlength="12" placeholder="例: ピタ、まめ、こつぶ" autocomplete="off">
+  <input type="text" id="name" maxlength="12" placeholder="例: まめ、こつぶ、ゆず" autocomplete="off">
 </section>
 
 <section>
   <div class="step"><span class="n">2</span><h2>いろ</h2></div>
   <p class="hint">顔の色になります。明るめの色のほうが、顔がよく見えます。</p>
   <div class="sw" id="colors"></div>
-  <label class="more">ほかの色から選ぶ <input type="color" id="colorPick" value="#fff262"></label>
+  <div class="more">
+    <label>ほかの色から選ぶ <input type="color" id="colorPick" value="#fff262"></label>
+    <label>カラーコード <input type="text" id="colorHex" inputmode="text" autocomplete="off" spellcheck="false" maxlength="7" placeholder="#fff262" aria-describedby="hexHelp"></label>
+  </div>
+  <p class="hint" id="hexHelp" style="margin-top:8px">色の名前で探すなら <a href="https://www.colordic.org/w" target="_blank" rel="noopener">和色大辞典（色見本のページ）</a>。気に入った色の「#」から始まる6文字をここに入れられます。</p>
 </section>
 
 <section>
@@ -124,27 +134,27 @@ footer b{font-family:var(--disp);color:var(--ink)}
 </section>
 
 <section>
-  <div class="step"><span class="n">6</span><h2>おまけ</h2></div>
-  <label class="toggle"><input type="checkbox" id="glasses"> メガネをかける</label>
+  <div class="step"><span class="n">6</span><h2>メガネ</h2></div>
+  <p class="hint">かけなくても大丈夫です。</p>
+  <div class="opts" id="glassesOpts"></div>
 </section>
 
 <div class="done">
   <h2>この子でいく</h2>
-  <p>押すと、LINE に送る文ができます。声は、お届けの日に実際に聞いてから一緒に決めます。</p>
+  <p>押すと、LINE に送る文ができます。文の最後にこのページのリンクが入っているので、それだけ送ってもらえれば大丈夫です。声は、お届けの日に実際に聞いてから一緒に決めます。</p>
   <button type="button" class="big" id="decide">この子でいく</button>
   <div class="summary" id="summary">
     <textarea id="lineText" readonly aria-label="LINE に送る文"></textarea>
     <div class="row">
-      <button type="button" class="pill" id="copyBtn">文をコピー</button>
-      <button type="button" class="pill" id="shareBtn">このページのリンクをコピー</button>
+      <button type="button" class="pill" id="copyBtn">この文をコピーして LINE に貼る</button>
     </div>
     <p class="ok" id="okMsg"></p>
   </div>
 </div>
 
 <footer>
-  <b>チームぷち</b>（横地・山田）<br>
-  ぷちは横地(PetitOnes)が育ててきたプロジェクトです。困ったときは LINE「チームぷち🤖相談窓口」へ。
+  <b>チームぷち</b><br>
+  困ったときは LINE「チームぷち🤖相談窓口」へ。
 </footer>
 </div>
 
@@ -175,18 +185,24 @@ const COLORS = [
   {n:"わかたけ",   c:"#68be8d"}, {n:"そら",       c:"#a0d8ef"}, {n:"なでしこ",   c:"#eebbcb"}, {n:"さんご",     c:"#f5b1aa"},
   {n:"あんず",     c:"#f7b977"}, {n:"しろ",       c:"#f0f0f0"},
 ];
+const GLASSES = [
+  {key:"none",   name:"かけない"},
+  {key:"round",  name:"まるメガネ"},
+  {key:"square", name:"しかくメガネ"},
+];
 const SLEEP_GRAY="#bcbcbc", BG="#ffffff";
 
 // ---------- 状態 ----------
-const st = {name:"", color:"#fff262", eye:"round", mouth:"smile", sleep:"slant", glasses:false};
+const st = {name:"", color:"#fff262", eye:"now", mouth:"heart", sleep:"slant", glasses:"none"};
 (function load(){
   try{ const q=new URLSearchParams(location.hash.slice(1)); if(q.size){ const c=q.get("c"); if(c&&/^[0-9a-f]{6}$/i.test(c)) st.color="#"+c.toLowerCase();
     for(const [k,list] of [["e",EYES],["m",MOUTHS],["s",SLEEPS]]){ const v=q.get(k); if(v&&list.some(x=>x.key===v)) st[{e:"eye",m:"mouth",s:"sleep"}[k]]=v; }
-    st.glasses=q.get("g")==="1"; st.name=(q.get("n")||"").slice(0,12); return; } }catch(e){}
+    const g=q.get("g"); st.glasses=GLASSES.some(x=>x.key===g)?g:(g==="1"?"round":"none"); st.name=(q.get("n")||"").slice(0,12); return; } }catch(e){}
   try{ const s=JSON.parse(localStorage.getItem("puchi_kisekae")||"null"); if(s) Object.assign(st,s); }catch(e){}
+  if(typeof st.glasses!=="string") st.glasses=st.glasses?"round":"none";
 })();
 function persist(){ try{ localStorage.setItem("puchi_kisekae", JSON.stringify(st)); }catch(e){}
-  const q=new URLSearchParams({c:st.color.slice(1), e:st.eye, m:st.mouth, s:st.sleep, g:st.glasses?"1":"0"}); if(st.name) q.set("n",st.name);
+  const q=new URLSearchParams({c:st.color.slice(1), e:st.eye, m:st.mouth, s:st.sleep, g:st.glasses}); if(st.name) q.set("n",st.name);
   history.replaceState(null,"","#"+q.toString()); }
 
 // ---------- 描画 ----------
@@ -230,9 +246,12 @@ function render(svg, f, a){
   const h = a.blinkH ?? f.eye.ry*2;
   if(a.sleep){ svg.appendChild(sleepEyeNode(f.eye,-1,f.sleepStyle,c,ox,oy)); svg.appendChild(sleepEyeNode(f.eye,+1,f.sleepStyle,c,ox,oy)); if(a.zz) svg.appendChild(zzNode(c,a.t)); }
   else { svg.appendChild(eyeNode(f.eye,-1,h,c,ox,oy)); svg.appendChild(eyeNode(f.eye,+1,h,c,ox,oy)); }
-  if(f.glasses){ const y=120+f.eye.dy+oy, r=f.eye.rx+11, s={fill:"none",stroke:c,"stroke-width":4,opacity:.85};
+  if(f.glasses==="round"){ const y=120+f.eye.dy+oy, r=f.eye.rx+11, s={fill:"none",stroke:c,"stroke-width":4,opacity:.85};
     svg.appendChild(el("circle",{cx:160-f.eye.dx+ox,cy:y,r,...s})); svg.appendChild(el("circle",{cx:160+f.eye.dx+ox,cy:y,r,...s}));
     svg.appendChild(el("line",{x1:160-f.eye.dx+r+ox,y1:y,x2:160+f.eye.dx-r+ox,y2:y,...s})); }
+  if(f.glasses==="square"){ const y=120+f.eye.dy+oy, w=Math.max(60,f.eye.rx*2+22), h=Math.max(30,Math.min(52,f.eye.ry*2+6)), s={fill:"none",stroke:c,"stroke-width":4,opacity:.85};
+    for(const side of [-1,1]){ const x=160+side*f.eye.dx+ox; svg.appendChild(el("rect",{x:x-w/2,y:y-h/2,width:w,height:h,rx:6,...s})); }
+    svg.appendChild(el("line",{x1:160-f.eye.dx+w/2+ox,y1:y,x2:160+f.eye.dx-w/2+ox,y2:y,...s})); }
   svg.appendChild(mouthNodes(f.mouth,c,ox,oy,a.sleep?0:(a.open||0)));
   if(a.sleep) svg.appendChild(el("rect",{x:0,y:0,width:320,height:240,fill:"#000",opacity:0.3}));
 }
@@ -252,24 +271,27 @@ function buildOpts(id, list, key, extra){
 }
 function refreshThumbs(){
   for(const th of thumbs){
-    const f=cur(); if(th.key==="eye") f.eye=th.it; if(th.key==="mouth") f.mouth=th.it; if(th.key==="sleep") f.sleepStyle=th.it.key;
+    const f=cur(); if(th.key==="eye") f.eye=th.it; if(th.key==="mouth") f.mouth=th.it; if(th.key==="sleep") f.sleepStyle=th.it.key; if(th.key==="glasses") f.glasses=th.it.key;
     render(th.svg, f, {t:0, color:st.color, idle:false, sleep:th.key==="sleep", zz:false, open:th.key==="mouth"?0:0});
   }
 }
-buildOpts("eyes", EYES, "eye"); buildOpts("mouths", MOUTHS, "mouth"); buildOpts("sleeps", SLEEPS, "sleep");
+buildOpts("eyes", EYES, "eye"); buildOpts("mouths", MOUTHS, "mouth"); buildOpts("sleeps", SLEEPS, "sleep"); buildOpts("glassesOpts", GLASSES, "glasses");
 
 const colBox=document.getElementById("colors"), colPick=document.getElementById("colorPick");
 function colorName(hex){ const k=COLORS.find(x=>x.c===hex); return k?k.n:"えらんだ色"; }
 for(const k of COLORS){ const b=document.createElement("button"); b.type="button"; b.dataset.c=k.c; b.innerHTML=`<i style="background:${k.c}"></i>${k.n}`; b.setAttribute("aria-pressed", k.c===st.color?"true":"false"); colBox.appendChild(b); }
-function setColor(hex){ st.color=hex; colPick.value=hex; for(const x of colBox.children) x.setAttribute("aria-pressed", x.dataset.c===hex?"true":"false"); persist(); refreshThumbs(); }
+function setColor(hex){ st.color=hex; colPick.value=hex; if(document.activeElement!==document.getElementById("colorHex")) document.getElementById("colorHex").value=hex; for(const x of colBox.children) x.setAttribute("aria-pressed", x.dataset.c===hex?"true":"false"); persist(); refreshThumbs(); }
 colBox.addEventListener("click",e=>{ const b=e.target.closest("button"); if(b) setColor(b.dataset.c); });
 colPick.addEventListener("input",()=>setColor(colPick.value));
 colPick.value=st.color;
+const colHex=document.getElementById("colorHex");
+colHex.value=st.color;
+colHex.addEventListener("input",()=>{ let v=colHex.value.trim().replace(/^＃/,"#"); if(!v.startsWith("#")) v="#"+v; if(/^#[0-9a-fA-F]{6}$/.test(v)){ colHex.setAttribute("aria-invalid","false"); setColor(v.toLowerCase()); } else colHex.setAttribute("aria-invalid", v.length>1?"true":"false"); });
+colHex.addEventListener("blur",()=>{ colHex.value=st.color; colHex.setAttribute("aria-invalid","false"); });
 
 const nameIn=document.getElementById("name"), plate=document.getElementById("nameplate");
 nameIn.value=st.name; nameIn.addEventListener("input",()=>{ st.name=nameIn.value.trim().slice(0,12); plate.textContent=st.name||"　"; persist(); });
 plate.textContent=st.name||"　";
-const gl=document.getElementById("glasses"); gl.checked=st.glasses; gl.addEventListener("change",()=>{ st.glasses=gl.checked; persist(); refreshThumbs(); });
 refreshThumbs();
 
 // ---------- ステージのアニメーション ----------
@@ -292,7 +314,11 @@ function loop(t){
 }
 requestAnimationFrame(loop);
 for(const [id,key] of [["tTalk","talk"],["tLook","look"],["tSleep","sleep"]]){
-  const b=document.getElementById(id); b.addEventListener("click",()=>{ anim[key]=!anim[key]; b.setAttribute("aria-pressed",String(anim[key])); if(key==="sleep"&&anim.sleep){ anim.talk=false; document.getElementById("tTalk").setAttribute("aria-pressed","false"); } });
+  const b=document.getElementById(id); b.addEventListener("click",()=>{
+    if(anim.sleep && key!=="sleep") return;   // おやすみ中は しゃべる・きょろきょろ を受け付けない
+    anim[key]=!anim[key]; b.setAttribute("aria-pressed",String(anim[key]));
+    if(key==="sleep"){ anim.talk=false; anim.look=false; for(const [i2,k2] of [["tTalk","talk"],["tLook","look"]]){ const x=document.getElementById(i2); x.setAttribute("aria-pressed","false"); x.disabled=anim.sleep; } }
+  });
 }
 
 // ---------- 決める ----------
@@ -305,13 +331,12 @@ function lineText(){
 め: ${e.name}
 くち: ${m.name}
 おやすみ: ${s.name}
-メガネ: ${st.glasses?"あり":"なし"}
+メガネ: ${GLASSES.find(x=>x.key===st.glasses).name}
 ${location.href}`;
 }
-document.getElementById("decide").addEventListener("click",()=>{ persist(); ta.value=lineText(); sum.classList.add("show"); ta.focus(); ta.select(); ok.textContent="下の文を LINE に貼って送ってください。"; });
+document.getElementById("decide").addEventListener("click",()=>{ persist(); ta.value=lineText(); sum.classList.add("show"); ta.focus(); ta.select(); ok.textContent="この文をそのまま LINE で送ってください。最後の行のリンクで、同じ顔がこちらでも見られます。"; });
 async function copy(text, msg){ try{ await navigator.clipboard.writeText(text); ok.textContent=msg; }catch(e){ ok.textContent="コピーできなかったので、文を長押しして選んでください。"; } }
 document.getElementById("copyBtn").addEventListener("click",()=>copy(ta.value,"コピーしました。LINE に貼ってください。"));
-document.getElementById("shareBtn").addEventListener("click",()=>{ persist(); copy(location.href,"リンクをコピーしました。"); });
 </script>
 </body>
 </html>
