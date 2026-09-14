@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ぷちのきせかえ</title>
+<meta name="description" content="うちに来るぷちの、名前・色・目・口・おやすみの顔を決めるページ。チームぷち。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=M+PLUS+Rounded+1c:wght@400;700&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23FFFDF8'/%3E%3Ccircle cx='10' cy='12' r='3.5' fill='%23E0674C'/%3E%3Ccircle cx='22' cy='12' r='3.5' fill='%23E0674C'/%3E%3Cellipse cx='16' cy='17' rx='2.2' ry='1' fill='%23E0674C'/%3E%3Cpath d='M10 21 Q16 27 22 21' stroke='%23E0674C' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+:root{
+  --paper:#FFFDF8; --cream:#FBF4E8; --ink:#3A322D; --ink-soft:#6E625A; --line:#E3D6C2;
+  --teal:#2E837B; --teal-ink:#20655E; --teal-soft:#D2E7E4;
+  --coral:#E0674C; --coral-ink:#B84E33; --coral-soft:#F6D8CF;
+  --gold:#C9903A; --gold-ink:#9A6C1E;
+  --disp:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Rounded Mplus 1c",sans-serif;
+  --body:"M PLUS Rounded 1c","Hiragino Maru Gothic ProN",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{background:var(--paper)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.75;padding:0 16px 96px}
+.wrap{max-width:640px;margin:0 auto}
+header{padding:28px 0 10px;text-align:center}
+.eyebrow{font-family:var(--disp);font-weight:700;color:var(--teal);font-size:14px;letter-spacing:.14em;margin:0}
+h1{font-family:var(--disp);font-weight:900;font-size:28px;margin:6px 0 8px;letter-spacing:.02em;text-wrap:balance}
+.lead{margin:0;color:var(--ink-soft);font-size:15px;max-width:34em;margin-inline:auto}
+.stage{position:sticky;top:0;z-index:5;background:linear-gradient(var(--paper) 78%, rgba(255,253,248,0));padding:12px 0 18px}
+.device{margin:0 auto;max-width:360px;background:#2b2a2a;border-radius:22px;padding:14px 14px 22px;box-shadow:0 12px 30px rgba(58,50,45,.18), inset 0 0 0 2px #3d3b3a}
+.device svg{display:block;width:100%;aspect-ratio:4/3;border-radius:8px}
+.device .nameplate{margin:12px auto 0;width:max-content;max-width:100%;color:#cfc8bf;font-family:var(--disp);font-weight:700;font-size:14px;letter-spacing:.1em;min-height:1.6em}
+.try{display:flex;justify-content:center;gap:8px;margin:12px 0 0;flex-wrap:wrap}
+.pill{font:inherit;font-family:var(--disp);font-weight:700;font-size:13.5px;padding:7px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
+.pill[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
+.pill:focus-visible,.opt:focus-visible,.sw button:focus-visible,.big:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+section{margin:26px 0 0}
+.step{display:flex;align-items:baseline;gap:10px;margin:0 0 4px}
+.step .n{font-family:var(--disp);font-weight:900;color:var(--coral);font-size:15px;letter-spacing:.08em}
+.step h2{font-family:var(--disp);font-weight:700;font-size:20px;margin:0}
+.hint{margin:0 0 12px;color:var(--ink-soft);font-size:14px}
+input[type=text]{font:inherit;font-size:18px;width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:14px;background:#fff;color:var(--ink)}
+input[type=text]:focus{outline:3px solid var(--teal-soft);border-color:var(--teal)}
+.sw{display:grid;grid-template-columns:repeat(5,1fr);gap:10px 6px}
+.sw button{appearance:none;border:0;background:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font:inherit;color:var(--ink-soft);font-size:11.5px}
+.sw button i{display:block;width:44px;height:44px;border-radius:50%;border:3px solid transparent;box-shadow:inset 0 0 0 1px rgba(58,50,45,.12)}
+.sw button[aria-pressed="true"]{color:var(--ink);font-weight:700}
+.sw button[aria-pressed="true"] i{border-color:var(--ink)}
+.more{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:14px;color:var(--ink-soft)}
+.more input{width:44px;height:36px;border:1.5px solid var(--line);border-radius:10px;background:none;padding:2px}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.opts.four{grid-template-columns:repeat(2,1fr)}
+.opt{appearance:none;font:inherit;border:1.5px solid var(--line);background:#fff;border-radius:16px;padding:8px 8px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--ink)}
+.opt svg{width:100%;aspect-ratio:4/3;border-radius:8px;display:block}
+.opt span{font-family:var(--disp);font-weight:700;font-size:14px}
+.opt[aria-pressed="true"]{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-soft)}
+.toggle{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:700}
+.toggle input{width:22px;height:22px;accent-color:var(--teal)}
+.done{margin-top:34px;background:var(--cream);border:1.5px solid var(--line);border-radius:20px;padding:18px 16px}
+.done h2{font-family:var(--disp);font-weight:900;font-size:20px;margin:0 0 6px}
+.done p{margin:0 0 12px;color:var(--ink-soft);font-size:14px}
+.big{display:block;width:100%;font:inherit;font-family:var(--disp);font-weight:900;font-size:17px;padding:14px;border-radius:14px;border:0;background:var(--coral);color:#fff;cursor:pointer}
+.big:hover{background:var(--coral-ink)}
+.summary{display:none;margin-top:14px}
+.summary.show{display:block}
+.summary textarea{width:100%;font:inherit;font-size:14px;line-height:1.6;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);resize:vertical;min-height:7.5em}
+.row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.row .pill{flex:1 1 auto;text-align:center}
+.ok{color:var(--teal-ink);font-size:13.5px;margin:6px 0 0;min-height:1.4em}
+footer{margin-top:36px;color:var(--ink-soft);font-size:13px;text-align:center;line-height:1.7}
+footer b{font-family:var(--disp);color:var(--ink)}
+@media (prefers-reduced-motion:reduce){.stage svg *{transition:none!important}}
+@media (min-width:560px){.opts{grid-template-columns:repeat(3,1fr)} .opts.four{grid-template-columns:repeat(4,1fr)} .sw{grid-template-columns:repeat(10,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <p class="eyebrow">となりに、ぷち。</p>
+  <h1>うちに来る子の、顔を決めよう</h1>
+  <p class="lead">名前と色と、目と口。決めたものがそのまま、この子の最初の姿になります。あとから変えられるので、気軽にどうぞ。</p>
+</header>
+
+<div class="stage">
+  <div class="device">
+    <svg id="stage" viewBox="0 0 320 240" role="img" aria-label="いまの顔"></svg>
+    <div class="nameplate" id="nameplate">　</div>
+  </div>
+  <div class="try" role="group" aria-label="ためしてみる">
+    <button type="button" class="pill" id="tTalk" aria-pressed="false">しゃべる</button>
+    <button type="button" class="pill" id="tLook" aria-pressed="false">きょろきょろ</button>
+    <button type="button" class="pill" id="tSleep" aria-pressed="false">おやすみ</button>
+  </div>
+</div>
+
+<section>
+  <div class="step"><span class="n">1</span><h2>なまえ</h2></div>
+  <p class="hint">呼びやすい2〜3文字がおすすめ。まだ決まらなければ空でも大丈夫です。</p>
+  <input type="text" id="name" maxlength="12" placeholder="例: ピタ、まめ、こつぶ" autocomplete="off">
+</section>
+
+<section>
+  <div class="step"><span class="n">2</span><h2>いろ</h2></div>
+  <p class="hint">顔の色になります。明るめの色のほうが、顔がよく見えます。</p>
+  <div class="sw" id="colors"></div>
+  <label class="more">ほかの色から選ぶ <input type="color" id="colorPick" value="#fff262"></label>
+</section>
+
+<section>
+  <div class="step"><span class="n">3</span><h2>め</h2></div>
+  <p class="hint">まばたきは、どの目でもします。</p>
+  <div class="opts" id="eyes"></div>
+</section>
+
+<section>
+  <div class="step"><span class="n">4</span><h2>くち</h2></div>
+  <p class="hint">しゃべるときに動きます。上の「しゃべる」で見てみてください。</p>
+  <div class="opts four" id="mouths"></div>
+</section>
+
+<section>
+  <div class="step"><span class="n">5</span><h2>おやすみのかお</h2></div>
+  <p class="hint">夜や、電池が少ないときの顔。色は灰色になります。</p>
+  <div class="opts four" id="sleeps"></div>
+</section>
+
+<section>
+  <div class="step"><span class="n">6</span><h2>おまけ</h2></div>
+  <label class="toggle"><input type="checkbox" id="glasses"> メガネをかける</label>
+</section>
+
+<div class="done">
+  <h2>この子でいく</h2>
+  <p>押すと、LINE に送る文ができます。声は、お届けの日に実際に聞いてから一緒に決めます。</p>
+  <button type="button" class="big" id="decide">この子でいく</button>
+  <div class="summary" id="summary">
+    <textarea id="lineText" readonly aria-label="LINE に送る文"></textarea>
+    <div class="row">
+      <button type="button" class="pill" id="copyBtn">文をコピー</button>
+      <button type="button" class="pill" id="shareBtn">このページのリンクをコピー</button>
+    </div>
+    <p class="ok" id="okMsg"></p>
+  </div>
+</div>
+
+<footer>
+  <b>チームぷち</b>（横地・山田）<br>
+  ぷちは横地(PetitOnes)が育ててきたプロジェクトです。困ったときは LINE「チームぷち🤖相談窓口」へ。
+</footer>
+</div>
+
+<script>
+// ---------- 部品 ----------
+const EYES = [
+  {key:"now",    name:"いつもの",     shape:"ellipse", rx:22, ry:32, dx:85, dy:-30, tilt:20},
+  {key:"round",  name:"まんまる",     shape:"circle",  rx:26, ry:26, dx:80, dy:-30, tilt:0},
+  {key:"genki",  name:"元気はつらつ", shape:"ellipse", rx:22, ry:30, dx:85, dy:-28, tilt:-20},
+  {key:"kiri",   name:"きりっと",     shape:"ellipse", rx:16, ry:34, dx:85, dy:-32, tilt:-30},
+  {key:"sleepy", name:"ねむそう",     shape:"ellipse", rx:24, ry:12, dx:85, dy:-26, tilt:0},
+  {key:"square", name:"しかく",       shape:"rect",    rx:20, ry:26, dx:85, dy:-30, tilt:0},
+];
+const MOUTHS = [
+  {key:"heart", name:"ハート",       shape:"heart", size:20, dy:45},
+  {key:"smile", name:"にっこり",     shape:"smile", size:70, dy:40},
+  {key:"o",     name:"ちいさい",     shape:"o",     size:8,  dy:46},
+  {key:"line",  name:"いっぽんせん", shape:"line",  size:40, dy:46},
+];
+const SLEEPS = [
+  {key:"slant", name:"すやすや"},
+  {key:"line",  name:"すっと"},
+  {key:"down",  name:"ぐっすり"},
+  {key:"up",    name:"にこにこ"},
+];
+const COLORS = [
+  {n:"たまご",     c:"#fff262"}, {n:"ラベンダー", c:"#cab8d9"}, {n:"みずいろ",   c:"#00afcc"}, {n:"きみどり",   c:"#b9c42f"},
+  {n:"わかたけ",   c:"#68be8d"}, {n:"そら",       c:"#a0d8ef"}, {n:"なでしこ",   c:"#eebbcb"}, {n:"さんご",     c:"#f5b1aa"},
+  {n:"あんず",     c:"#f7b977"}, {n:"しろ",       c:"#f0f0f0"},
+];
+const SLEEP_GRAY="#bcbcbc", BG="#ffffff";
+
+// ---------- 状態 ----------
+const st = {name:"", color:"#fff262", eye:"round", mouth:"smile", sleep:"slant", glasses:false};
+(function load(){
+  try{ const q=new URLSearchParams(location.hash.slice(1)); if(q.size){ const c=q.get("c"); if(c&&/^[0-9a-f]{6}$/i.test(c)) st.color="#"+c.toLowerCase();
+    for(const [k,list] of [["e",EYES],["m",MOUTHS],["s",SLEEPS]]){ const v=q.get(k); if(v&&list.some(x=>x.key===v)) st[{e:"eye",m:"mouth",s:"sleep"}[k]]=v; }
+    st.glasses=q.get("g")==="1"; st.name=(q.get("n")||"").slice(0,12); return; } }catch(e){}
+  try{ const s=JSON.parse(localStorage.getItem("puchi_kisekae")||"null"); if(s) Object.assign(st,s); }catch(e){}
+})();
+function persist(){ try{ localStorage.setItem("puchi_kisekae", JSON.stringify(st)); }catch(e){}
+  const q=new URLSearchParams({c:st.color.slice(1), e:st.eye, m:st.mouth, s:st.sleep, g:st.glasses?"1":"0"}); if(st.name) q.set("n",st.name);
+  history.replaceState(null,"","#"+q.toString()); }
+
+// ---------- 描画 ----------
+const NS="http://www.w3.org/2000/svg";
+function el(tag,attrs){ const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); return e; }
+function eyeNode(e, side, h, c, ox, oy){
+  const x=160+side*e.dx+ox, y=120+e.dy+oy, tilt=side<0?e.tilt:-e.tilt;
+  if(e.shape==="rect") return el("rect",{x:x-e.rx,y:y-h/2,width:e.rx*2,height:h,rx:Math.min(8,h/2),fill:c,transform:`rotate(${tilt} ${x} ${y})`});
+  return el("ellipse",{cx:x,cy:y,rx:e.rx,ry:h/2,fill:c,transform:`rotate(${tilt} ${x} ${y})`});
+}
+function sleepEyeNode(e, side, style, c, ox, oy){
+  const x=160+side*e.dx+ox, y=120+e.dy+oy, w=Math.max(30,e.rx*2), s={stroke:c,"stroke-width":9,fill:"none","stroke-linecap":"round"};
+  if(style==="line") return el("line",{x1:x-w/2,y1:y,x2:x+w/2,y2:y,...s});
+  if(style==="slant"){ const dy=w*0.32; return el("line",{x1:x-w/2,y1:y+(side<0?dy:-dy),x2:x+w/2,y2:y+(side<0?-dy:dy),...s}); }
+  if(style==="down") return el("path",{d:`M ${x-w/2} ${y-4} Q ${x} ${y+w*0.45} ${x+w/2} ${y-4}`,...s});
+  return el("path",{d:`M ${x-w/2} ${y+6} Q ${x} ${y-w*0.5} ${x+w/2} ${y+6}`,...s});
+}
+function zzNode(c,t){ const g=el("g",{fill:"none",stroke:c,"stroke-width":7,"stroke-linecap":"round","stroke-linejoin":"round"}); const b=Math.sin(t*0.002)*3;
+  const z=(x,y,s)=>el("path",{d:`M ${x} ${y} h ${s} l ${-s} ${s} h ${s}`}); g.appendChild(z(118,46+b,18)); g.appendChild(z(148,26-b,22)); return g; }
+function mouthNodes(m,c,ox,oy,open){
+  const x=160+ox, y=120+m.dy+oy, g=el("g",{});
+  if(m.shape==="heart"){ const r=m.size+open*12/100;
+    g.appendChild(el("circle",{cx:x-18,cy:y,r,fill:c})); g.appendChild(el("circle",{cx:x+18,cy:y,r,fill:c}));
+    g.appendChild(el("polygon",{points:`${x-30},${y+10} ${x+30},${y+10} ${x},${y+45}`,fill:c})); return g; }
+  const oh=open*22/100;
+  if(m.shape==="smile"){ const w=m.size;
+    if(oh>1) g.appendChild(el("path",{d:`M ${x-w/2} ${y} Q ${x} ${y+w*0.6} ${x+w/2} ${y} Q ${x} ${y+w*0.6-oh*1.6} ${x-w/2} ${y} Z`,fill:c}));
+    g.appendChild(el("path",{d:`M ${x-w/2} ${y} Q ${x} ${y+w*0.6} ${x+w/2} ${y}`,stroke:c,"stroke-width":10,fill:"none","stroke-linecap":"round"})); return g; }
+  if(m.shape==="o"){ g.appendChild(el("circle",{cx:x,cy:y,r:m.size+oh*0.6,fill:c})); return g; }
+  if(oh>1) g.appendChild(el("ellipse",{cx:x,cy:y,rx:m.size/2,ry:oh/2+2,fill:c}));
+  g.appendChild(el("rect",{x:x-m.size/2,y:y-4,width:m.size,height:8,rx:4,fill:c})); return g;
+}
+// f = {eye, mouth, glasses, sleepStyle}, a = {t, blinkH, open, gaze, idle, sleep, zz, color}
+function render(svg, f, a){
+  while(svg.firstChild) svg.removeChild(svg.firstChild);
+  svg.appendChild(el("rect",{x:0,y:0,width:320,height:240,fill:BG}));
+  const c = a.sleep ? SLEEP_GRAY : a.color;
+  const idleX = a.idle ? Math.sin(a.t*0.002)*5 : 0, idleY = a.idle ? Math.cos(a.t*0.0014)*4 : 0;
+  const gx=(a.gaze||0)*30/100, ox=idleX+gx, oy=idleY;
+  svg.appendChild(el("ellipse",{cx:160+idleX+gx*0.8,cy:121+idleY,rx:14,ry:6,fill:c}));
+  const h = a.blinkH ?? f.eye.ry*2;
+  if(a.sleep){ svg.appendChild(sleepEyeNode(f.eye,-1,f.sleepStyle,c,ox,oy)); svg.appendChild(sleepEyeNode(f.eye,+1,f.sleepStyle,c,ox,oy)); if(a.zz) svg.appendChild(zzNode(c,a.t)); }
+  else { svg.appendChild(eyeNode(f.eye,-1,h,c,ox,oy)); svg.appendChild(eyeNode(f.eye,+1,h,c,ox,oy)); }
+  if(f.glasses){ const y=120+f.eye.dy+oy, r=f.eye.rx+11, s={fill:"none",stroke:c,"stroke-width":4,opacity:.85};
+    svg.appendChild(el("circle",{cx:160-f.eye.dx+ox,cy:y,r,...s})); svg.appendChild(el("circle",{cx:160+f.eye.dx+ox,cy:y,r,...s}));
+    svg.appendChild(el("line",{x1:160-f.eye.dx+r+ox,y1:y,x2:160+f.eye.dx-r+ox,y2:y,...s})); }
+  svg.appendChild(mouthNodes(f.mouth,c,ox,oy,a.sleep?0:(a.open||0)));
+  if(a.sleep) svg.appendChild(el("rect",{x:0,y:0,width:320,height:240,fill:"#000",opacity:0.3}));
+}
+function cur(){ return {eye:EYES.find(e=>e.key===st.eye), mouth:MOUTHS.find(m=>m.key===st.mouth), sleepStyle:st.sleep, glasses:st.glasses}; }
+
+// ---------- 選択肢の描画 ----------
+const thumbs=[];
+function buildOpts(id, list, key, extra){
+  const box=document.getElementById(id); box.innerHTML="";
+  for(const it of list){
+    const b=document.createElement("button"); b.type="button"; b.className="opt"; b.dataset.key=it.key; b.setAttribute("aria-pressed", st[key]===it.key?"true":"false");
+    const svg=document.createElementNS(NS,"svg"); svg.setAttribute("viewBox","0 0 320 240"); svg.setAttribute("aria-hidden","true");
+    b.appendChild(svg); const sp=document.createElement("span"); sp.textContent=it.name; b.appendChild(sp);
+    b.addEventListener("click",()=>{ st[key]=it.key; for(const x of box.children) x.setAttribute("aria-pressed", x===b?"true":"false"); persist(); refreshThumbs(); });
+    box.appendChild(b); thumbs.push({svg, key, it});
+  }
+}
+function refreshThumbs(){
+  for(const th of thumbs){
+    const f=cur(); if(th.key==="eye") f.eye=th.it; if(th.key==="mouth") f.mouth=th.it; if(th.key==="sleep") f.sleepStyle=th.it.key;
+    render(th.svg, f, {t:0, color:st.color, idle:false, sleep:th.key==="sleep", zz:false, open:th.key==="mouth"?0:0});
+  }
+}
+buildOpts("eyes", EYES, "eye"); buildOpts("mouths", MOUTHS, "mouth"); buildOpts("sleeps", SLEEPS, "sleep");
+
+const colBox=document.getElementById("colors"), colPick=document.getElementById("colorPick");
+function colorName(hex){ const k=COLORS.find(x=>x.c===hex); return k?k.n:"えらんだ色"; }
+for(const k of COLORS){ const b=document.createElement("button"); b.type="button"; b.dataset.c=k.c; b.innerHTML=`<i style="background:${k.c}"></i>${k.n}`; b.setAttribute("aria-pressed", k.c===st.color?"true":"false"); colBox.appendChild(b); }
+function setColor(hex){ st.color=hex; colPick.value=hex; for(const x of colBox.children) x.setAttribute("aria-pressed", x.dataset.c===hex?"true":"false"); persist(); refreshThumbs(); }
+colBox.addEventListener("click",e=>{ const b=e.target.closest("button"); if(b) setColor(b.dataset.c); });
+colPick.addEventListener("input",()=>setColor(colPick.value));
+colPick.value=st.color;
+
+const nameIn=document.getElementById("name"), plate=document.getElementById("nameplate");
+nameIn.value=st.name; nameIn.addEventListener("input",()=>{ st.name=nameIn.value.trim().slice(0,12); plate.textContent=st.name||"　"; persist(); });
+plate.textContent=st.name||"　";
+const gl=document.getElementById("glasses"); gl.checked=st.glasses; gl.addEventListener("change",()=>{ st.glasses=gl.checked; persist(); refreshThumbs(); });
+refreshThumbs();
+
+// ---------- ステージのアニメーション ----------
+const stage=document.getElementById("stage");
+const anim={talk:false, look:false, sleep:false};
+let blinkT0=-1, nextBlink=performance.now()+1200, BLINK_MS=180, talkTarget=0, mouthCur=0, nextTalk=0, gaze=0, gazeTarget=0, nextLook=0;
+const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
+function loop(t){
+  if(!anim.sleep && t>=nextBlink){ blinkT0=t; nextBlink=t+2500+Math.random()*2500; }
+  let h=null; const e=cur().eye;
+  if(blinkT0>=0){ const p=(t-blinkT0)/BLINK_MS; if(p<1){ const tri=p<0.5?p*2:(1-p)*2; h=Math.max(3, e.ry*2-tri*(e.ry*2-3)); } }
+  if(anim.talk && t>=nextTalk){ talkTarget=Math.random()<0.25?0:30+Math.random()*70; nextTalk=t+90+Math.random()*120; }
+  if(!anim.talk) talkTarget=0;
+  mouthCur+=(talkTarget-mouthCur)*0.4; if(!anim.talk&&mouthCur<1) mouthCur=0;
+  if(anim.look && t>=nextLook){ gazeTarget=(Math.random()*2-1)*100; nextLook=t+900+Math.random()*1200; }
+  if(!anim.look) gazeTarget=0;
+  gaze+=(gazeTarget-gaze)*0.12;
+  render(stage, cur(), {t, blinkH:h, open:mouthCur, gaze, idle:!reduced, sleep:anim.sleep, zz:true, color:st.color});
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+for(const [id,key] of [["tTalk","talk"],["tLook","look"],["tSleep","sleep"]]){
+  const b=document.getElementById(id); b.addEventListener("click",()=>{ anim[key]=!anim[key]; b.setAttribute("aria-pressed",String(anim[key])); if(key==="sleep"&&anim.sleep){ anim.talk=false; document.getElementById("tTalk").setAttribute("aria-pressed","false"); } });
+}
+
+// ---------- 決める ----------
+const sum=document.getElementById("summary"), ta=document.getElementById("lineText"), ok=document.getElementById("okMsg");
+function lineText(){
+  const e=EYES.find(x=>x.key===st.eye), m=MOUTHS.find(x=>x.key===st.mouth), s=SLEEPS.find(x=>x.key===st.sleep);
+  return `ぷちのきせかえ、決めました🌱
+なまえ: ${st.name||"（あとで）"}
+いろ: ${colorName(st.color)} ${st.color}
+め: ${e.name}
+くち: ${m.name}
+おやすみ: ${s.name}
+メガネ: ${st.glasses?"あり":"なし"}
+${location.href}`;
+}
+document.getElementById("decide").addEventListener("click",()=>{ persist(); ta.value=lineText(); sum.classList.add("show"); ta.focus(); ta.select(); ok.textContent="下の文を LINE に貼って送ってください。"; });
+async function copy(text, msg){ try{ await navigator.clipboard.writeText(text); ok.textContent=msg; }catch(e){ ok.textContent="コピーできなかったので、文を長押しして選んでください。"; } }
+document.getElementById("copyBtn").addEventListener("click",()=>copy(ta.value,"コピーしました。LINE に貼ってください。"));
+document.getElementById("shareBtn").addEventListener("click",()=>{ persist(); copy(location.href,"リンクをコピーしました。"); });
+</script>
+</body>
+</html>
