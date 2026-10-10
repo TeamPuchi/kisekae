@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ぷちのきせかえ</title>
+<meta name="version" content="1.0.0">
 <meta name="description" content="うちに来るぷちの、名前・色・目・口・おやすみの顔を決めるページ。チームぷち。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=M+PLUS+Rounded+1c:wght@400;700&display=swap">
@@ -154,11 +155,14 @@ footer b{font-family:var(--disp);color:var(--ink)}
 
 <footer>
   <b>チームぷち</b><br>
-  困ったときは LINE「チームぷち🤖相談窓口」へ。
+  困ったときは LINE「チームぷち🤖相談窓口」へ。<br>
+  <span id="ver" style="font-size:11px;opacity:.7">ぷちのきせかえ v—</span>
 </footer>
 </div>
 
 <script>
+// きせかえの版。上げるときは <meta name="version"> と両方を直す。main に入ると CI が同じ名前のタグと Release を作る(README「運用」)
+const KISEKAE_VERSION = "1.0.0";
 // ---------- 部品 ----------
 const EYES = [
   {key:"now",    name:"いつもの",     shape:"ellipse", rx:22, ry:32, dx:85, dy:-30, tilt:20},
@@ -202,7 +206,7 @@ const st = {name:"", color:"#fff262", eye:"now", mouth:"heart", sleep:"slant", g
   if(typeof st.glasses!=="string") st.glasses=st.glasses?"round":"none";
 })();
 function persist(){ try{ localStorage.setItem("puchi_kisekae", JSON.stringify(st)); }catch(e){}
-  const q=new URLSearchParams({c:st.color.slice(1), e:st.eye, m:st.mouth, s:st.sleep, g:st.glasses}); if(st.name) q.set("n",st.name);
+  const q=new URLSearchParams({c:st.color.slice(1), e:st.eye, m:st.mouth, s:st.sleep, g:st.glasses, v:KISEKAE_VERSION}); if(st.name) q.set("n",st.name);
   history.replaceState(null,"","#"+q.toString()); }
 
 // ---------- 描画 ----------
@@ -322,6 +326,7 @@ for(const [id,key] of [["tTalk","talk"],["tLook","look"],["tSleep","sleep"]]){
 }
 
 // ---------- 決める ----------
+document.getElementById("ver").textContent="ぷちのきせかえ v"+KISEKAE_VERSION;
 const sum=document.getElementById("summary"), ta=document.getElementById("lineText"), ok=document.getElementById("okMsg");
 function lineText(){
   const e=EYES.find(x=>x.key===st.eye), m=MOUTHS.find(x=>x.key===st.mouth), s=SLEEPS.find(x=>x.key===st.sleep);
