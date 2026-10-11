@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ぷちのきせかえ</title>
-<meta name="version" content="1.1.1">
+<meta name="version" content="1.1.2">
 <meta name="description" content="うちに来るぷちの、名前・色・目・口・おやすみの顔を決めるページ。チームぷち。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=M+PLUS+Rounded+1c:wght@400;700&display=swap">
@@ -117,7 +117,7 @@ footer b{font-family:var(--disp);color:var(--ink)}
   <div class="more" style="margin-top:10px">
     <label>この色の呼びかた <input type="text" id="colorName" maxlength="10" placeholder="例: うみ、はちみつ" autocomplete="off"></label>
   </div>
-  <p class="hint">自分で選んだ色に、名前をつけられます（ぷちの「〇〇の子」になります）。空なら上の名前のままです。</p>
+  <p class="hint">自分で選んだ色に、名前をつけられます。空なら上の名前のままです。</p>
 </section>
 
 <section>
@@ -172,7 +172,7 @@ footer b{font-family:var(--disp);color:var(--ink)}
 
 <script>
 // きせかえの版。上げるときは <meta name="version"> と両方を直す。main に入ると CI が同じ名前のタグと Release を作る(README「運用」)
-const KISEKAE_VERSION = "1.1.1";
+const KISEKAE_VERSION = "1.1.2";
 // ---------- 部品 ----------
 const EYES = [
   {key:"now",    name:"いつもの",     shape:"ellipse", rx:22, ry:32, dx:85, dy:-30, tilt:20},
