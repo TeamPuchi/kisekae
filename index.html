@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ぷちのきせかえ</title>
-<meta name="version" content="1.0.0">
+<meta name="version" content="1.1.0">
 <meta name="description" content="うちに来るぷちの、名前・色・目・口・おやすみの顔を決めるページ。チームぷち。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=M+PLUS+Rounded+1c:wght@400;700&display=swap">
@@ -114,6 +114,16 @@ footer b{font-family:var(--disp);color:var(--ink)}
     <label>カラーコード <input type="text" id="colorHex" inputmode="text" autocomplete="off" spellcheck="false" maxlength="7" placeholder="#fff262" aria-describedby="hexHelp"></label>
   </div>
   <p class="hint" id="hexHelp" style="margin-top:8px">色の名前で探すなら <a href="https://www.colordic.org/w" target="_blank" rel="noopener">和色大辞典（色見本のページ）</a>。気に入った色の「#」から始まる6文字をここに入れられます。</p>
+  <div class="more" style="margin-top:10px">
+    <label>この色の呼びかた <input type="text" id="colorName" maxlength="10" placeholder="例: うみ、はちみつ" autocomplete="off"></label>
+  </div>
+  <p class="hint">自分で選んだ色に、名前をつけられます（ぷちの「〇〇の子」になります）。空なら上の名前のままです。</p>
+</section>
+
+<section>
+  <div class="step"><span class="n">2′</span><h2>はいけい</h2></div>
+  <p class="hint">顔のうしろの色。ぷちの体の設定ページと同じ5つから選びます。</p>
+  <div class="sw" id="bgs"></div>
 </section>
 
 <section>
@@ -162,7 +172,7 @@ footer b{font-family:var(--disp);color:var(--ink)}
 
 <script>
 // きせかえの版。上げるときは <meta name="version"> と両方を直す。main に入ると CI が同じ名前のタグと Release を作る(README「運用」)
-const KISEKAE_VERSION = "1.0.0";
+const KISEKAE_VERSION = "1.1.0";
 // ---------- 部品 ----------
 const EYES = [
   {key:"now",    name:"いつもの",     shape:"ellipse", rx:22, ry:32, dx:85, dy:-30, tilt:20},
@@ -185,9 +195,13 @@ const SLEEPS = [
   {key:"up",    name:"にこにこ"},
 ];
 const COLORS = [
-  {n:"たまご",     c:"#fff262"}, {n:"ラベンダー", c:"#cab8d9"}, {n:"みずいろ",   c:"#00afcc"}, {n:"きみどり",   c:"#b9c42f"},
+  {n:"もも",       c:"#f4a8b8"}, {n:"ぶどう",     c:"#7b4f9e"}, {n:"あお",       c:"#3d7cc9"}, {n:"きみどり",   c:"#b9c42f"},
   {n:"わかたけ",   c:"#68be8d"}, {n:"そら",       c:"#a0d8ef"}, {n:"なでしこ",   c:"#eebbcb"}, {n:"さんご",     c:"#f5b1aa"},
   {n:"あんず",     c:"#f7b977"}, {n:"しろ",       c:"#f0f0f0"},
+];
+// 背景の色。ファームの設定ページ(provisioning.cpp)と同じ 5 色(#134)。この 5 つ以外は選べない
+const BGS = [
+  {n:"しろ",     c:"#ffffff"}, {n:"きなり",   c:"#f3ead8"}, {n:"くりーむ", c:"#fbf4e8"}, {n:"こん",     c:"#223a70"}, {n:"くろ",     c:"#2b2b2b"},
 ];
 const GLASSES = [
   {key:"none",   name:"かけない"},
@@ -197,16 +211,17 @@ const GLASSES = [
 const SLEEP_GRAY="#bcbcbc", BG="#ffffff";
 
 // ---------- 状態 ----------
-const st = {name:"", color:"#fff262", eye:"now", mouth:"heart", sleep:"slant", glasses:"none"};
+const st = {name:"", color:"#68be8d", cname:"", bg:"#ffffff", eye:"now", mouth:"heart", sleep:"slant", glasses:"none"};
 (function load(){
   try{ const q=new URLSearchParams(location.hash.slice(1)); if(q.size){ const c=q.get("c"); if(c&&/^[0-9a-f]{6}$/i.test(c)) st.color="#"+c.toLowerCase();
     for(const [k,list] of [["e",EYES],["m",MOUTHS],["s",SLEEPS]]){ const v=q.get(k); if(v&&list.some(x=>x.key===v)) st[{e:"eye",m:"mouth",s:"sleep"}[k]]=v; }
-    const g=q.get("g"); st.glasses=GLASSES.some(x=>x.key===g)?g:(g==="1"?"round":"none"); st.name=(q.get("n")||"").slice(0,12); return; } }catch(e){}
+    const g=q.get("g"); st.glasses=GLASSES.some(x=>x.key===g)?g:(g==="1"?"round":"none"); st.name=(q.get("n")||"").slice(0,12); st.cname=(q.get("cn")||"").slice(0,10); const b=q.get("b"); st.bg=(b&&BGS.some(x=>x.c==="#"+b.toLowerCase()))?"#"+b.toLowerCase():"#ffffff"; return; } }catch(e){}
   try{ const s=JSON.parse(localStorage.getItem("puchi_kisekae")||"null"); if(s) Object.assign(st,s); }catch(e){}
   if(typeof st.glasses!=="string") st.glasses=st.glasses?"round":"none";
+  if(!BGS.some(x=>x.c===st.bg)) st.bg="#ffffff"; if(typeof st.cname!=="string") st.cname="";
 })();
 function persist(){ try{ localStorage.setItem("puchi_kisekae", JSON.stringify(st)); }catch(e){}
-  const q=new URLSearchParams({c:st.color.slice(1), e:st.eye, m:st.mouth, s:st.sleep, g:st.glasses, v:KISEKAE_VERSION}); if(st.name) q.set("n",st.name);
+  const q=new URLSearchParams({c:st.color.slice(1), b:st.bg.slice(1), e:st.eye, m:st.mouth, s:st.sleep, g:st.glasses, v:KISEKAE_VERSION}); if(st.name) q.set("n",st.name); if(st.cname) q.set("cn",st.cname);
   history.replaceState(null,"","#"+q.toString()); }
 
 // ---------- 描画 ----------
@@ -242,7 +257,7 @@ function mouthNodes(m,c,ox,oy,open){
 // f = {eye, mouth, glasses, sleepStyle}, a = {t, blinkH, open, gaze, idle, sleep, zz, color}
 function render(svg, f, a){
   while(svg.firstChild) svg.removeChild(svg.firstChild);
-  svg.appendChild(el("rect",{x:0,y:0,width:320,height:240,fill:BG}));
+  svg.appendChild(el("rect",{x:0,y:0,width:320,height:240,fill:st.bg}));
   const c = a.sleep ? SLEEP_GRAY : a.color;
   const idleX = a.idle ? Math.sin(a.t*0.002)*5 : 0, idleY = a.idle ? Math.cos(a.t*0.0014)*4 : 0;
   const gx=(a.gaze||0)*30/100, ox=idleX+gx, oy=idleY;
@@ -282,7 +297,7 @@ function refreshThumbs(){
 buildOpts("eyes", EYES, "eye"); buildOpts("mouths", MOUTHS, "mouth"); buildOpts("sleeps", SLEEPS, "sleep"); buildOpts("glassesOpts", GLASSES, "glasses");
 
 const colBox=document.getElementById("colors"), colPick=document.getElementById("colorPick");
-function colorName(hex){ const k=COLORS.find(x=>x.c===hex); return k?k.n:"えらんだ色"; }
+function colorName(hex){ if(st.cname) return st.cname; const k=COLORS.find(x=>x.c===hex); return k?k.n:"えらんだ色"; }
 for(const k of COLORS){ const b=document.createElement("button"); b.type="button"; b.dataset.c=k.c; b.innerHTML=`<i style="background:${k.c}"></i>${k.n}`; b.setAttribute("aria-pressed", k.c===st.color?"true":"false"); colBox.appendChild(b); }
 function setColor(hex){ st.color=hex; colPick.value=hex; if(document.activeElement!==document.getElementById("colorHex")) document.getElementById("colorHex").value=hex; for(const x of colBox.children) x.setAttribute("aria-pressed", x.dataset.c===hex?"true":"false"); persist(); refreshThumbs(); }
 colBox.addEventListener("click",e=>{ const b=e.target.closest("button"); if(b) setColor(b.dataset.c); });
@@ -293,6 +308,11 @@ colHex.value=st.color;
 colHex.addEventListener("input",()=>{ let v=colHex.value.trim().replace(/^＃/,"#"); if(!v.startsWith("#")) v="#"+v; if(/^#[0-9a-fA-F]{6}$/.test(v)){ colHex.setAttribute("aria-invalid","false"); setColor(v.toLowerCase()); } else colHex.setAttribute("aria-invalid", v.length>1?"true":"false"); });
 colHex.addEventListener("blur",()=>{ colHex.value=st.color; colHex.setAttribute("aria-invalid","false"); });
 
+const cnameIn=document.getElementById("colorName"); cnameIn.value=st.cname; cnameIn.addEventListener("input",()=>{ st.cname=cnameIn.value.trim().slice(0,10); persist(); });
+const bgBox=document.getElementById("bgs");
+for(const k of BGS){ const b=document.createElement("button"); b.type="button"; b.dataset.c=k.c; b.innerHTML=`<i style="background:${k.c};border:1px solid #d9cdbf"></i>${k.n}`; b.setAttribute("aria-pressed", k.c===st.bg?"true":"false"); bgBox.appendChild(b); }
+function setBg(hex){ if(!BGS.some(x=>x.c===hex)) return; st.bg=hex; for(const x of bgBox.children) x.setAttribute("aria-pressed", x.dataset.c===hex?"true":"false"); persist(); refreshThumbs(); }
+bgBox.addEventListener("click",e=>{ const b=e.target.closest("button"); if(b) setBg(b.dataset.c); });
 const nameIn=document.getElementById("name"), plate=document.getElementById("nameplate");
 nameIn.value=st.name; nameIn.addEventListener("input",()=>{ st.name=nameIn.value.trim().slice(0,12); plate.textContent=st.name||"　"; persist(); });
 plate.textContent=st.name||"　";
@@ -333,6 +353,7 @@ function lineText(){
   return `ぷちのきせかえ、決めました🌱
 なまえ: ${st.name||"（あとで）"}
 いろ: ${colorName(st.color)} ${st.color}
+はいけい: ${BGS.find(x=>x.c===st.bg).n} ${st.bg}
 め: ${e.name}
 くち: ${m.name}
 おやすみ: ${s.name}
