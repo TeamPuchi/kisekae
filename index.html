@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ぷちのきせかえ</title>
-<meta name="version" content="1.1.2">
+<meta name="version" content="1.1.3">
 <meta name="description" content="うちに来るぷちの、名前・色・目・口・おやすみの顔を決めるページ。チームぷち。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=M+PLUS+Rounded+1c:wght@400;700&display=swap">
@@ -77,6 +77,11 @@ footer{margin-top:36px;color:var(--ink-soft);font-size:13px;text-align:center;li
 footer b{font-family:var(--disp);color:var(--ink)}
 @media (prefers-reduced-motion:reduce){.stage svg *{transition:none!important}}
 @media (min-width:560px){.opts{grid-template-columns:repeat(3,1fr)} .opts.four{grid-template-columns:repeat(4,1fr)} .sw{grid-template-columns:repeat(10,1fr)}}
+/* コピーしたときの知らせ(右下にふわっと出て、2.4 秒で消える) */
+.toast{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:50;background:var(--teal,#2E837B);color:#fff;font-weight:700;font-size:15px;padding:12px 18px;border-radius:999px;box-shadow:0 6px 20px rgba(0,0,0,.18);opacity:0;transform:translateY(12px) scale(.96);pointer-events:none;transition:opacity .25s ease,transform .25s ease;max-width:calc(100vw - 32px)}
+.toast.show{opacity:1;transform:translateY(0) scale(1)}
+.toast.ng{background:#B84E33}
+@media (prefers-reduced-motion:reduce){.toast{transition:opacity .2s}}
 </style>
 </head>
 <body>
@@ -172,7 +177,7 @@ footer b{font-family:var(--disp);color:var(--ink)}
 
 <script>
 // きせかえの版。上げるときは <meta name="version"> と両方を直す。main に入ると CI が同じ名前のタグと Release を作る(README「運用」)
-const KISEKAE_VERSION = "1.1.2";
+const KISEKAE_VERSION = "1.1.3";
 // ---------- 部品 ----------
 const EYES = [
   {key:"now",    name:"いつもの",     shape:"ellipse", rx:22, ry:32, dx:85, dy:-30, tilt:20},
@@ -361,7 +366,10 @@ function lineText(){
 ${location.href}`;
 }
 document.getElementById("decide").addEventListener("click",()=>{ persist(); ta.value=lineText(); sum.classList.add("show"); ta.focus(); ta.select(); ok.textContent="この文をそのまま LINE で送ってください。最後の行のリンクで、同じ顔がこちらでも見られます。"; });
-async function copy(text, msg){ try{ await navigator.clipboard.writeText(text); ok.textContent=msg; }catch(e){ ok.textContent="コピーできなかったので、文を長押しして選んでください。"; } }
+let toastEl=null, toastTimer=null;
+function toast(msg, ng){ if(!toastEl){ toastEl=document.createElement("div"); toastEl.className="toast"; toastEl.setAttribute("role","status"); document.body.appendChild(toastEl); }
+  toastEl.textContent=msg; toastEl.classList.toggle("ng",!!ng); clearTimeout(toastTimer); requestAnimationFrame(()=>toastEl.classList.add("show")); toastTimer=setTimeout(()=>toastEl.classList.remove("show"), 2400); }
+async function copy(text, msg){ try{ await navigator.clipboard.writeText(text); ok.textContent=msg; toast("✓ コピーしました"); }catch(e){ ok.textContent="コピーできなかったので、文を長押しして選んでください。"; toast("コピーできませんでした。文を長押しして選んでください", true); } }
 document.getElementById("copyBtn").addEventListener("click",()=>copy(ta.value,"コピーしました。LINE に貼ってください。"));
 </script>
 </body>
