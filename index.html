@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ぷちのきせかえ</title>
-<meta name="version" content="1.1.0">
+<meta name="version" content="1.1.1">
 <meta name="description" content="うちに来るぷちの、名前・色・目・口・おやすみの顔を決めるページ。チームぷち。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=M+PLUS+Rounded+1c:wght@400;700&display=swap">
@@ -122,7 +122,7 @@ footer b{font-family:var(--disp);color:var(--ink)}
 
 <section>
   <div class="step"><span class="n">2′</span><h2>はいけい</h2></div>
-  <p class="hint">顔のうしろの色。ぷちの体の設定ページと同じ5つから選びます。</p>
+  <p class="hint">顔のうしろの色。ぷちの体の設定ページと同じ3つから選びます。</p>
   <div class="sw" id="bgs"></div>
 </section>
 
@@ -172,7 +172,7 @@ footer b{font-family:var(--disp);color:var(--ink)}
 
 <script>
 // きせかえの版。上げるときは <meta name="version"> と両方を直す。main に入ると CI が同じ名前のタグと Release を作る(README「運用」)
-const KISEKAE_VERSION = "1.1.0";
+const KISEKAE_VERSION = "1.1.1";
 // ---------- 部品 ----------
 const EYES = [
   {key:"now",    name:"いつもの",     shape:"ellipse", rx:22, ry:32, dx:85, dy:-30, tilt:20},
@@ -199,9 +199,9 @@ const COLORS = [
   {n:"わかたけ",   c:"#68be8d"}, {n:"そら",       c:"#a0d8ef"}, {n:"なでしこ",   c:"#eebbcb"}, {n:"さんご",     c:"#f5b1aa"},
   {n:"あんず",     c:"#f7b977"}, {n:"しろ",       c:"#f0f0f0"},
 ];
-// 背景の色。ファームの設定ページ(provisioning.cpp)と同じ 5 色(#134)。この 5 つ以外は選べない
+// 背景の色。3 色(10/11 ありさん: こん・くろ はやめる)。ファームの設定ページも同じにする(#249)。この 3 つ以外は選べない
 const BGS = [
-  {n:"しろ",     c:"#ffffff"}, {n:"きなり",   c:"#f3ead8"}, {n:"くりーむ", c:"#fbf4e8"}, {n:"こん",     c:"#223a70"}, {n:"くろ",     c:"#2b2b2b"},
+  {n:"しろ",     c:"#ffffff"}, {n:"きなり",   c:"#f3ead8"}, {n:"くりーむ", c:"#fbf4e8"},
 ];
 const GLASSES = [
   {key:"none",   name:"かけない"},
